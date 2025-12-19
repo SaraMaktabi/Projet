@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Charger le CSV
-df = pd.read_csv("tracks_embeddings_input.csv")
+df = pd.read_csv("Dataset/tracks_embeddings_input.csv")
 
 # Créer embeddings textuels
 model = SentenceTransformer('all-MiniLM-L6-v2')
