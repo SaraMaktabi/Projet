@@ -41,8 +41,8 @@ def get_all_artists():
 def get_all_genres():
     q = """
     MATCH (g:Genre)
-    WHERE g.genre_name IS NOT NULL
-    RETURN DISTINCT g.genre_name AS name
+    WHERE g.genre_id IS NOT NULL
+    RETURN DISTINCT g.genre_id AS name
     ORDER BY name
     """
     with driver.session(database=NEO4J_DB) as s:
@@ -63,7 +63,7 @@ def get_tracks(artist_filter=None, genre_filter=None, min_popularity=0, max_popu
     # Filtre par genre
     if genre_filter and genre_filter != "Tous les genres":
         match_clauses.append("MATCH (t)-[:IN_GENRE]->(g:Genre)")
-        where_conditions.append("g.genre_name = $genre")
+        where_conditions.append("g.genre_id = $genre")
         params["genre"] = genre_filter
     
     # Filtre par popularité
