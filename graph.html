@@ -33,8 +33,8 @@
 
              #mynetwork {
                  width: 100%;
-                 height: 400px;
-                 background-color: #222222;
+                 height: 620px;
+                 background-color: #020617;
                  border: 1px solid lightgray;
                  position: relative;
                  float: left;
@@ -42,12 +42,6 @@
 
              
 
-             
-             #config {
-                 float: left;
-                 width: 400px;
-                 height: 600px;
-             }
              
 
              
@@ -63,8 +57,6 @@
         </div>
 
         
-        
-            <div id="config"></div>
         
 
         <script type="text/javascript">
@@ -96,8 +88,8 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#2563eb", "font": {"color": "white"}, "id": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "\ud83c\udfb5 \"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "shape": "circle"}, {"color": "#16a34a", "font": {"color": "white"}, "id": "Adrian Barba", "label": "\ud83d\udc64 Adrian Barba", "shape": "circle"}, {"color": "#9333ea", "font": {"color": "white"}, "id": "anime;;;;;;;", "label": "\ud83c\udfbc anime;;;;;;;", "shape": "circle"}, {"color": "#0ea5e9", "font": {"color": "white"}, "id": "100 A\u00f1os", "label": "\ud83c\udfb5 100 A\u00f1os", "shape": "circle"}, {"color": "#0ea5e9", "font": {"color": "white"}, "id": "Yesterday", "label": "\ud83c\udfb5 Yesterday", "shape": "circle"}, {"color": "#0ea5e9", "font": {"color": "white"}, "id": "ON MY OWN", "label": "\ud83c\udfb5 ON MY OWN", "shape": "circle"}, {"color": "#0ea5e9", "font": {"color": "white"}, "id": "Rama", "label": "\ud83c\udfb5 Rama", "shape": "circle"}]);
-                  edges = new vis.DataSet([{"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "PERFORMED_BY", "to": "Adrian Barba"}, {"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "IN_GENRE", "to": "anime;;;;;;;"}, {"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "100 A\u00f1os"}, {"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "Yesterday"}, {"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "ON MY OWN"}, {"from": "\"\"Brave Heart (From \"\"\"\"Digimon Adventure\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "Rama"}]);
+                  nodes = new vis.DataSet([{"color": "#2563eb", "font": {"color": "white"}, "id": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "\ud83c\udfb5 Circles (based on Ludovico Einaudi Experience)", "shape": "star", "size": 42}, {"color": "#22c55e", "font": {"color": "white"}, "id": "Ludovico Einaudi", "label": "\ud83d\udc64 Ludovico Einaudi", "shape": "circle", "size": 30}, {"color": "#a855f7", "font": {"color": "white"}, "id": "ambient\";;;;;;;;;;;;;;", "label": "\ud83c\udfbc ambient", "shape": "box", "size": 24}, {"color": "#38bdf8", "font": {"color": "white"}, "id": "What a Wonderful World", "label": "\ud83c\udfb5 What a Wonderful World", "shape": "dot", "size": 26}, {"color": "#38bdf8", "font": {"color": "white"}, "id": "Everytime We Touch (Acoustic)", "label": "\ud83c\udfb5 Everytime We Touch (Acoustic)", "shape": "dot", "size": 26}, {"color": "#38bdf8", "font": {"color": "white"}, "id": "Angela", "label": "\ud83c\udfb5 Angela", "shape": "dot", "size": 26}, {"color": "#38bdf8", "font": {"color": "white"}, "id": "Simple", "label": "\ud83c\udfb5 Simple", "shape": "dot", "size": 26}, {"color": "#38bdf8", "font": {"color": "white"}, "id": "For You", "label": "\ud83c\udfb5 For You", "shape": "dot", "size": 26}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "PERFORMED_BY", "to": "Ludovico Einaudi", "width": 2}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "IN_GENRE", "to": "ambient\";;;;;;;;;;;;;;", "width": 2}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "What a Wonderful World", "width": 3}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "Everytime We Touch (Acoustic)", "width": 3}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "Angela", "width": 3}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "Simple", "width": 3}, {"arrows": "to", "from": "\"\"Circles (based on Ludovico Einaudi \"\"\"\"Experience\"\"\"\")\"\"", "label": "SIMILAR_TO", "to": "For You", "width": 3}]);
 
                   nodeColors = {};
                   allNodes = nodes.get({ returnType: "Object" });
@@ -108,46 +100,11 @@
                   // adding nodes and edges to the graph
                   data = {nodes: nodes, edges: edges};
 
-                  var options = {
-    "configure": {
-        "enabled": true,
-        "filter": [
-            "physics"
-        ]
-    },
-    "edges": {
-        "color": {
-            "inherit": true
-        },
-        "smooth": {
-            "enabled": true,
-            "type": "dynamic"
-        }
-    },
-    "interaction": {
-        "dragNodes": true,
-        "hideEdgesOnDrag": false,
-        "hideNodesOnDrag": false
-    },
-    "physics": {
-        "enabled": true,
-        "stabilization": {
-            "enabled": true,
-            "fit": true,
-            "iterations": 1000,
-            "onlyDynamicEdges": false,
-            "updateInterval": 50
-        }
-    }
-};
+                  var options = {"physics": {"enabled": true, "barnesHut": {"gravitationalConstant": -26000, "springLength": 160}}, "edges": {"arrows": {"to": {"enabled": true}}, "font": {"size": 14}}, "interaction": {"zoomView": true, "dragView": true}};
 
                   
 
 
-                  
-                  // if this network requires displaying the configure window,
-                  // put it in its div
-                  options.configure["container"] = document.getElementById("config");
                   
 
                   network = new vis.Network(container, data, options);
