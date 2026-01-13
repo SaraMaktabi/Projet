@@ -117,6 +117,32 @@ def get_recommendations(track):
     with driver.session(database=NEO4J_DB) as s:
         return list(s.run(q, name=track))
 
+def increment_search_count(track_name):
+    """Incrémente le compteur de recherche d'une chanson (REQUÊTE DE MODIFICATION)"""
+    q = """
+    MATCH (t:Track {track_name: $name})
+    SET t.search_count = coalesce(t.search_count, 0) + 1
+    RETURN t.track_name AS track_name, t.search_count AS search_count
+    """
+    with driver.session(database=NEO4J_DB) as s:
+        result = s.run(q, name=track_name).single()
+        return result["search_count"] if result else 0
+
+def get_most_searched_tracks(limit=10):
+    """Récupère les chansons les plus recherchées (REQUÊTE D'AGRÉGATION)"""
+    q = """
+    MATCH (t:Track)
+    WHERE t.search_count IS NOT NULL AND t.search_count > 0
+    OPTIONAL MATCH (t)-[:PERFORMED_BY]->(a:Artist)
+    RETURN t.track_name AS track,
+           t.search_count AS count,
+           collect(DISTINCT a.artist_name) AS artists
+    ORDER BY t.search_count DESC
+    LIMIT $limit
+    """
+    with driver.session(database=NEO4J_DB) as s:
+        return list(s.run(q, limit=limit))
+
 # ================= GRAPH =================
 def render_graph(track):
     q = """
@@ -704,6 +730,52 @@ st.markdown('''
 </div>
 ''', unsafe_allow_html=True)
 
+# ================= TOP RECHERCHÉES =================
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.markdown('<h3 class="icon-title"><i class="fas fa-fire"></i> Top 10 Chansons les plus recherchées</h3>', unsafe_allow_html=True)
+
+top_tracks = get_most_searched_tracks(10)
+
+if top_tracks:
+    cols = st.columns(5)
+    for idx, track in enumerate(top_tracks[:5], 1):
+        with cols[idx-1]:
+            st.markdown(f'''
+            <div class="metric-card" style="padding: 20px;">
+                <div style="font-size: 2.5em; color: #3b82f6; font-weight: 900; margin-bottom: 8px;">#{idx}</div>
+                <div style="font-size: 0.95em; margin: 12px 0; font-weight: 700; color: #f1f5f9; min-height: 40px;">{clean_text(track['track'], 35)}</div>
+                <div style="font-size: 0.8em; color: #94a3b8; margin-bottom: 12px;">{', '.join(clean_list(track['artists']))[:30]}</div>
+                <div style="margin-top: 12px; padding: 8px; background: rgba(245, 158, 11, 0.15); border-radius: 8px; border-left: 3px solid #f59e0b;">
+                    <i class="fas fa-search" style="color: #f59e0b;"></i> 
+                    <span style="color: #fbbf24; font-weight: 800; font-size: 1.1em;">{track['count']}</span>
+                    <span style="color: #94a3b8; font-size: 0.85em;"> recherches</span>
+                </div>
+            </div>
+            ''', unsafe_allow_html=True)
+    
+    # Deuxième ligne (places 6-10)
+    if len(top_tracks) > 5:
+        st.markdown('<div style="margin-top: 16px;"></div>', unsafe_allow_html=True)
+        cols2 = st.columns(5)
+        for idx, track in enumerate(top_tracks[5:10], 6):
+            with cols2[idx-6]:
+                st.markdown(f'''
+                <div class="metric-card" style="padding: 20px;">
+                    <div style="font-size: 2.5em; color: #8b5cf6; font-weight: 900; margin-bottom: 8px;">#{idx}</div>
+                    <div style="font-size: 0.95em; margin: 12px 0; font-weight: 700; color: #f1f5f9; min-height: 40px;">{clean_text(track['track'], 35)}</div>
+                    <div style="font-size: 0.8em; color: #94a3b8; margin-bottom: 12px;">{', '.join(clean_list(track['artists']))[:30]}</div>
+                    <div style="margin-top: 12px; padding: 8px; background: rgba(139, 92, 246, 0.15); border-radius: 8px; border-left: 3px solid #8b5cf6;">
+                        <i class="fas fa-search" style="color: #8b5cf6;"></i> 
+                        <span style="color: #a78bfa; font-weight: 800; font-size: 1.1em;">{track['count']}</span>
+                        <span style="color: #94a3b8; font-size: 0.85em;"> recherches</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+else:
+    st.markdown('<p style="color: #64748b; text-align: center; padding: 20px;"><i class="fas fa-info-circle"></i> Aucune donnée de recherche disponible. Commencez à explorer des chansons !</p>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
 # ================= FILTRES =================
 st.markdown('<div class="filter-card">', unsafe_allow_html=True)
 st.markdown('<h3 class="icon-title"><i class="fas fa-filter"></i> Filtres de recherche</h3>', unsafe_allow_html=True)
@@ -751,9 +823,17 @@ selected = st.selectbox("", tracks, format_func=lambda x: clean_text(x), label_v
 st.markdown('</div>', unsafe_allow_html=True)
 
 if selected:
+    # Incrémenter le compteur de recherche
+    search_count = increment_search_count(selected)
+    
     info = get_track_info(selected)
 
-    st.markdown('<h2 class="icon-title"><i class="fas fa-play-circle"></i> Now Playing</h2>', unsafe_allow_html=True)
+    # Titre avec badge tendance si > 10 recherches
+    title_html = '<h2 class="icon-title"><i class="fas fa-play-circle"></i> Now Playing'
+    if search_count > 10:
+        title_html += f' <span style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.5em; font-weight: 700; vertical-align: middle; margin-left: 12px;"><i class="fas fa-fire"></i> TENDANCE · {search_count} recherches</span>'
+    title_html += '</h2>'
+    st.markdown(title_html, unsafe_allow_html=True)
     st.markdown(f"""
     <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)); border: 2px solid rgba(59, 130, 246, 0.4);">
       <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
