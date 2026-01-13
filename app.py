@@ -49,37 +49,34 @@ def get_all_genres():
         return [r["name"] for r in s.run(q)]
 
 def get_tracks(artist_filter=None, genre_filter=None, min_popularity=0, max_popularity=100):
-    conditions = ["t.track_name IS NOT NULL"]
+    # Construction de la requête de base
+    match_clauses = ["MATCH (t:Track)"]
+    where_conditions = ["t.track_name IS NOT NULL"]
+    params = {}
     
-    if min_popularity > 0 or max_popularity < 100:
-        conditions.append(f"t.popularity >= {min_popularity} AND t.popularity <= {max_popularity}")
-    
-    optional_match = []
-    where_clauses = []
-    
+    # Filtre par artiste
     if artist_filter and artist_filter != "Tous les artistes":
-        optional_match.append("OPTIONAL MATCH (t)-[:PERFORMED_BY]->(a:Artist)")
-        where_clauses.append("a.artist_name = $artist")
+        match_clauses.append("MATCH (t)-[:PERFORMED_BY]->(a:Artist)")
+        where_conditions.append("a.artist_name = $artist")
+        params["artist"] = artist_filter
     
+    # Filtre par genre
     if genre_filter and genre_filter != "Tous les genres":
-        optional_match.append("OPTIONAL MATCH (t)-[:IN_GENRE]->(g:Genre)")
-        where_clauses.append("g.genre_name = $genre")
+        match_clauses.append("MATCH (t)-[:IN_GENRE]->(g:Genre)")
+        where_conditions.append("g.genre_name = $genre")
+        params["genre"] = genre_filter
     
-    where_str = " AND ".join(conditions + where_clauses) if (conditions or where_clauses) else ""
+    # Filtre par popularité
+    if min_popularity > 0 or max_popularity < 100:
+        where_conditions.append(f"t.popularity >= {min_popularity} AND t.popularity <= {max_popularity}")
     
+    # Construction de la requête finale
     q = f"""
-    MATCH (t:Track)
-    {' '.join(optional_match)}
-    WHERE {where_str}
+    {' '.join(match_clauses)}
+    WHERE {' AND '.join(where_conditions)}
     RETURN DISTINCT t.track_name AS name
     ORDER BY name
     """
-    
-    params = {}
-    if artist_filter and artist_filter != "Tous les artistes":
-        params["artist"] = artist_filter
-    if genre_filter and genre_filter != "Tous les genres":
-        params["genre"] = genre_filter
     
     with driver.session(database=NEO4J_DB) as s:
         return [r["name"] for r in s.run(q, **params)]
