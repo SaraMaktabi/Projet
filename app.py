@@ -333,14 +333,14 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
-    color: #ffffff;
-    font-weight: 300;
+    color: #ffffff !important;
+    font-weight: 300 !important;
     font-size: 1.3em;
     animation: fadeInUp 0.7s ease-out;
 }
 
 .icon-title i {
-    color: #ffffff;
+    color: #ffffff !important;
     font-size: 1.1em;
     animation: pulse 2s ease-in-out infinite;
 }
@@ -488,8 +488,8 @@ div[data-testid="stMetricValue"] {
 }
 
 h2, h3, h4 {
-    color: #ffffff;
-    font-weight: 300;
+    color: #ffffff !important;
+    font-weight: 300 !important;
 }
 
 h2 {
@@ -567,8 +567,8 @@ div[data-testid="stSlider"] label {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #ffffff;
-    font-weight: 700;
+    color: #ffffff !important;
+    font-weight: 700 !important;
     font-size: 1.05em;
     margin-bottom: 12px;
     padding: 12px 16px;
@@ -610,8 +610,8 @@ div[data-testid="stSlider"] label {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #ffffff;
-    font-weight: 700;
+    color: #ffffff !important;
+    font-weight: 700 !important;
     font-size: 1.2em;
     margin-bottom: 16px;
 }
