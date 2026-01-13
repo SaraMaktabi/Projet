@@ -7,8 +7,8 @@ from neo4j import GraphDatabase
 # -------------------
 NEO4J_URI = "bolt://localhost:7687"
 NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "rootroot"
-NEO4J_DB = "project"
+NEO4J_PASSWORD = "12345678"
+NEO4J_DB = "music-recommendation"
 
 driver = GraphDatabase.driver(
     NEO4J_URI,
